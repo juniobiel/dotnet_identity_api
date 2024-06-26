@@ -47,7 +47,7 @@ jobs:
         file: ./src/InvesTrace.Identity.Api/Dockerfile
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest
-        env:
+        env: |
           ENV_NAME: "Development"
 
   deploy:
