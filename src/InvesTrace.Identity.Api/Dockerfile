@@ -17,7 +17,7 @@ COPY . .
 RUN dotnet build InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj -c Release -o /app/publish
 
 FROM runtime AS final
 WORKDIR /app
