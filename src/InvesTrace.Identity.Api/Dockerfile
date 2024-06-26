@@ -3,8 +3,7 @@ WORKDIR /
 EXPOSE 80
 
 #ENV ASPNETCORE_URLS=http://+:8000;http://+:80;
-ARG ENVIRONMENT
-ENV ASPNETCORE_ENVIRONMENT $ENVIRONMENT
+
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
@@ -15,10 +14,10 @@ COPY . /Identity
 WORKDIR /Identity
 
 # Restore libraries
-RUN dotnet restore
+RUN dotnet restore InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj
 
 # Build
-RUN dotnet build -c Release -o /build
+RUN dotnet build InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj -c Release -o /build
 
 #define o nome do step
 FROM build AS publish
@@ -30,6 +29,8 @@ WORKDIR /publish
 
 COPY --from=publish /publish .
 
+ARG ENVIRONMENT
+ENV ASPNETCORE_ENVIRONMENT $ENVIRONMENT
 #ENTRYPOINT [ "dotnet", "InvesTrace.Identity.Api.dll" ]
 
 # Usa porta dinâmica do Heroku
