@@ -3,7 +3,7 @@ WORKDIR /
 EXPOSE 80
 
 #ENV ASPNETCORE_URLS=http://+:8000;http://+:80;
-ENV ASPNETCORE_ENVIRONMENT=$envname
+ENV ASPNETCORE_ENVIRONMENT=$ENV_NAME
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
