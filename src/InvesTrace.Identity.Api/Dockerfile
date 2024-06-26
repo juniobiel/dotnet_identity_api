@@ -14,7 +14,7 @@ RUN dotnet restore
 
 COPY . .
 
-RUN dotnet build -c Release -o /app/build
+RUN dotnet build InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish -c Release -o /app/publish
