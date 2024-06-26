@@ -11,7 +11,7 @@ WORKDIR /
 COPY . ./Identity
 WORKDIR /Identity
 # Restore libraries
-RUN dotnet restore ./InvesTrace.Identity.Api.csproj
+RUN dotnet restore ./Identity/InvesTrace.Identity.Api.csproj
 
 RUN dotnet build ./InvesTrace.Identity.Api.csproj -c Release -o /app/build
 
