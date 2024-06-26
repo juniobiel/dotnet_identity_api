@@ -1,33 +1,29 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-WORKDIR /
+WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
 #ENV ASPNETCORE_URLS=http://+:8000;http://+:80;
 
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-# Copy all in this root folder
-COPY . /Identity
+WORKDIR /src
 
-#Faz a navegação
-WORKDIR /Identity
+# Copy all in this root folder
+COPY ["InvesTrace.Identity.Api.csproj", "InvesTrace.Identity.Api.csproj"]
 
 # Restore libraries
-RUN dotnet restore Identity/InvesTrace.Identity.Api.csproj
+RUN dotnet restore "InvesTrace.Identity.Api.csproj"
+COPY . .
 
-# Build
-RUN dotnet build Identity/InvesTrace.Identity.Api.csproj -c Release -o /build
+RUN dotnet build "InvesTrace.Identity.Api.csproj" -c Release -o /app/build
 
-#define o nome do step
 FROM build AS publish
-
-RUN dotnet publish Identity/InvesTrace.Identity.Api.csproj -c Release -o /publish
+RUN dotnet publish "InvesTrace.Identity.Api.csproj" -c Release -o /app/publish
 
 FROM runtime AS final
-WORKDIR /publish
-
-COPY --from=publish /publish .
+WORKDIR /app
+COPY --from=publish /app/publish .
 
 ARG ENVIRONMENT
 ENV ASPNETCORE_ENVIRONMENT $ENVIRONMENT
