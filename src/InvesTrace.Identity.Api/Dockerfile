@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 # Copy all in this root folder
-COPY ./src/InvesTrace.Identity.Api.csproj /src/InvesTrace.Identity.Api.csproj
+COPY ./InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj /src/InvesTrace.Identity.Api.csproj
 WORKDIR /src
 # Restore libraries
 RUN dotnet restore
