@@ -12,6 +12,8 @@ WORKDIR /src
 # Restore libraries
 RUN dotnet restore
 
+COPY . .
+
 RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
