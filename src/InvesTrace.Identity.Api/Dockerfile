@@ -3,7 +3,8 @@ WORKDIR /
 EXPOSE 80
 
 #ENV ASPNETCORE_URLS=http://+:8000;http://+:80;
-ENV ASPNETCORE_ENVIRONMENT=$ENV_NAME
+ARG ENVIRONMENT
+ENV ASPNETCORE_ENVIRONMENT $ENVIRONMENT
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
@@ -33,3 +34,4 @@ COPY --from=publish /publish .
 
 # Usa porta dinâmica do Heroku
 CMD ASPNETCORE_URLS="http://*:$PORT" dotnet InvesTrace.Identity.Api.dll
+
