@@ -43,8 +43,8 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
-        context: .
-        file: ./src/InvesTrace.Identity.Api/Dockerfile
+        context: "{{defaultContext}}:src"
+        file: ./InvesTrace.Identity.Api/Dockerfile
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest
         build-args: |
