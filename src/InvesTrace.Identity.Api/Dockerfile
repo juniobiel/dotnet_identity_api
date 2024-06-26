@@ -14,15 +14,15 @@ COPY . /Identity
 WORKDIR /Identity
 
 # Restore libraries
-RUN dotnet restore InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj
+RUN dotnet restore InvesTrace.Identity.Api.csproj
 
 # Build
-RUN dotnet build InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj -c Release -o /build
+RUN dotnet build InvesTrace.Identity.Api.csproj -c Release -o /build
 
 #define o nome do step
 FROM build AS publish
 
-RUN dotnet publish -c Release -o /publish
+RUN dotnet publish InvesTrace.Identity.Api.csproj -c Release -o /publish
 
 FROM runtime AS final
 WORKDIR /publish
