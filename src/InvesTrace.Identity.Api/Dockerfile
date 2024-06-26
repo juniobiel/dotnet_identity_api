@@ -6,17 +6,17 @@ EXPOSE 443
 #ENV ASPNETCORE_URLS=http://+:8000;http://+:80;
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /
+WORKDIR /src
 # Copy all in this root folder
-COPY . ./Identity
-WORKDIR /Identity
+COPY ./InvesTrace.Identity.Api.csproj /src
 # Restore libraries
-RUN dotnet restore ./Identity/InvesTrace.Identity.Api.csproj
+RUN dotnet restore InvesTrace.Identity.Api.csproj
+COPY . .
 
-RUN dotnet build ./InvesTrace.Identity.Api.csproj -c Release -o /app/build
+RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish ./InvesTrace.Identity.Api.csproj -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 FROM runtime AS final
 WORKDIR /app
