@@ -62,13 +62,17 @@ jobs:
 
         # Build Docker image
       - name: Docker build
-        run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        env: 
+          HEROKU_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: docker login --username=_ --password=$HEROKU_KEY registry.heroku.com
 
       # Push the Docker image to Heroku Container Registry
       - name: Publish
+        env: 
+          HEROKU_NAME: ${{ secrets.HEROKU_API_NAME }}
         run: |
-          heroku container:push web -a ${{ secrets.HEROKU_API_NAME }} --args ENVIRONMENT=Development
-          heroku container:release web -a ${{ secrets.HEROKU_API_NAME }} --args ENVIRONMENT=Development
+          heroku container:push web -a $HEROKU_NAME --args ENVIRONMENT=Development
+          heroku container:release web -a $HEROKU_NAME --args ENVIRONMENT=Development
       
       # - name: Deploying into Heroku
       #   uses: AkhileshNS/heroku-deploy@v3.13.15
