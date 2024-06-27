@@ -88,7 +88,7 @@ jobs:
       - name: Build and push
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push web worker --recursive --app ${{ secrets.HEROKU_API_NAME }} --arg ENVIRONMENT=Development
+        run: heroku container:push web worker --app ${{ secrets.HEROKU_API_NAME }} --arg ENVIRONMENT=Development
 
       # - name: Release to Development
       #   env:
