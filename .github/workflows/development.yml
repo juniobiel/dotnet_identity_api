@@ -71,8 +71,8 @@ jobs:
         env: 
           HEROKU_NAME: ${{ secrets.HEROKU_API_NAME }}
         run: |
-          heroku container:push web -a $HEROKU_NAME --args ENVIRONMENT=Development
-          heroku container:release web -a $HEROKU_NAME --args ENVIRONMENT=Development
+          heroku container:push web --recursive -a $HEROKU_NAME --args ENVIRONMENT=Development
+          heroku container:release web --recursive -a $HEROKU_NAME --args ENVIRONMENT=Development
       
       # - name: Deploying into Heroku
       #   uses: AkhileshNS/heroku-deploy@v3.13.15
