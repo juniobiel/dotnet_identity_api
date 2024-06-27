@@ -60,13 +60,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      # - name: Deploying into Heroku
-      #   uses: AkhileshNS/heroku-deploy@v3.12.12
-      #   with:
-      #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-      #     heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
-      #     heroku_email: ${{ secrets.HEROKU_EMAIL }}
-      #     usedocker: true
+      - name: Deploying into Heroku
+        uses: AkhileshNS/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          docker_build_args: |
+            ENVIRONMENT=Development
+          appdir: "./src/IT.Identity.Api"
       # - name: Docker Pull Image
       #   run: | 
       #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest && 
@@ -75,20 +78,20 @@ jobs:
       #       docker push registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web
 
 
-      - name: Update Heroku CLI
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: sudo apt update && sudo apt install heroku
+      # - name: Update Heroku CLI
+      #   env:
+      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      #   run: sudo apt update && sudo apt install heroku
 
-      - name: Login to Heroku Container Registry
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login
+      # - name: Login to Heroku Container Registry
+      #   env:
+      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      #   run: heroku container:login
 
-      - name: Build and push
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push web --recursive --context-path . --app ${{ secrets.HEROKU_API_NAME }} --arg ENVIRONMENT=Development
+      # - name: Build and push
+      #   env:
+      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      #   run: heroku container:push web --recursive --context-path . --app ${{ secrets.HEROKU_API_NAME }} --arg ENVIRONMENT=Development
 
       # - name: Release to Development
       #   env:
