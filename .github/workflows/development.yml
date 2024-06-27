@@ -61,7 +61,12 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Docker Pull Image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest
+        run: | 
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest && 
+            id=`docker images | grep $docker_image | awk '{print $3}'` &&
+            docker tag $id registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web &&
+            docker push registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web
+
 
       - name: Update Heroku CLI
         env:
