@@ -73,12 +73,12 @@ jobs:
       - name: Build and push
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push web --app ${{ secrets.HEROKU_API_NAME }} --recursive --context-path /src/IT.Identity.Api/ --arg ENVIRONMENT=Development
+        run: heroku container:push . --app ${{ secrets.HEROKU_API_NAME }} --recursive --context-path /src/IT.Identity.Api/ --arg ENVIRONMENT=Development
 
       - name: Release to Development
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release web --app ${{ secrets.HEROKU_API_NAME }} --context-path /src/IT.Identity.Api/ --arg ENVIRONMENT=Development
+        run: heroku container:release . --app ${{ secrets.HEROKU_API_NAME }} --context-path /src/IT.Identity.Api/ --arg ENVIRONMENT=Development
 
       # - name: App Settings Variable Substitution
       #   uses: microsoft/variable-substitution@v1
