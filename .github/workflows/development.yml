@@ -70,6 +70,7 @@ jobs:
           docker_build_args: |
             ENVIRONMENT=Development
           appdir: "src/IT.Identity.Api"
+          branch: develop
       # - name: Docker Pull Image
       #   run: | 
       #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest && 
