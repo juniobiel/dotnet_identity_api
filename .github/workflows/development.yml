@@ -60,12 +60,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Docker Pull Image
-        run: | 
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest && 
-            id=`docker images | grep $docker_image | awk '{print $3}'` &&
-            docker tag $id registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web &&
-            docker push registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web
+      # - name: Deploying into Heroku
+      #   uses: AkhileshNS/heroku-deploy@v3.12.12
+      #   with:
+      #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+      #     heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
+      #     heroku_email: ${{ secrets.HEROKU_EMAIL }}
+      #     usedocker: true
+      # - name: Docker Pull Image
+      #   run: | 
+      #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest && 
+      #       id=`docker images | grep $docker_image | awk '{print $3}'` &&
+      #       docker tag $id registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web &&
+      #       docker push registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web
 
 
       - name: Update Heroku CLI
@@ -81,12 +88,12 @@ jobs:
       - name: Build and push
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push web --app ${{ secrets.HEROKU_API_NAME }}
+        run: heroku container:push web worker --recursive --app ${{ secrets.HEROKU_API_NAME }} --arg ENVIRONMENT=Development
 
-      - name: Release to Development
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release web --app ${{ secrets.HEROKU_API_NAME }}
+      # - name: Release to Development
+      #   env:
+      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      #   run: heroku container:release web --app ${{ secrets.HEROKU_API_NAME }}
 
       # - name: App Settings Variable Substitution
       #   uses: microsoft/variable-substitution@v1
@@ -94,10 +101,3 @@ jobs:
       #     files: '**/appsettings.json'
       #   env:
       #     AppSettings: ${{ secrets.APP_SETTINGS }}
-      # - name: Deploying into Heroku
-      #   uses: AkhileshNS/heroku-deploy@v3.12.12
-      #   with:
-      #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-      #     heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
-      #     heroku_email: ${{ secrets.HEROKU_EMAIL }}
-      #     usedocker: true
