@@ -71,6 +71,7 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
         run: |
+          sudo apt update && sudo apt install heroku
           cat > ~/.netrc <<EOF
             machine api.heroku.com
               login $HEROKU_EMAIL
@@ -85,8 +86,6 @@ jobs:
         env: 
           HEROKU_NAME: ${{ secrets.HEROKU_API_NAME }}
         run: |
-          sudo apt update && sudo apt install heroku
-          heroku container:login
           heroku container:push web --recursive -a $HEROKU_NAME --context-path src/InvesTrace.Identity.Api --args ENVIRONMENT=Development
           heroku container:release web --recursive -a $HEROKU_NAME --context-path src/InvesTrace.Identity.Api --args ENVIRONMENT=Development
       
@@ -106,32 +105,3 @@ jobs:
       #       id=`docker images | grep $docker_image | awk '{print $3}'` &&
       #       docker tag $id registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web &&
       #       docker push registry.heroku.com/${{ secrets.HEROKU_API_NAME }}/web
-
-      
-
-      # - name: Update Heroku CLI
-      #   env:
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: sudo apt update && sudo apt install heroku
-
-      # - name: Login to Heroku Container Registry
-      #   env:
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: heroku container:login
-
-      # - name: Build and push
-      #   env:
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: heroku container:push web --recursive --context-path src/InvesTrace.Identity.Api --app ${{ secrets.HEROKU_API_NAME }} --arg ENVIRONMENT=Development
-
-      # - name: Release to Development
-      #   env:
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: heroku container:release web --app ${{ secrets.HEROKU_API_NAME }}
-
-      # - name: App Settings Variable Substitution
-      #   uses: microsoft/variable-substitution@v1
-      #   with: 
-      #     files: '**/appsettings.json'
-      #   env:
-      #     AppSettings: ${{ secrets.APP_SETTINGS }}
