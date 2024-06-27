@@ -20,9 +20,10 @@ jobs:
     - name: Build
       run: dotnet build --no-restore ./src/IT.Identity.sln
   
-  docker:
+  docker-deployment:
     runs-on: ubuntu-latest
     needs: build
+    environment: Development
 
     steps:
     - name: Checkout
@@ -49,36 +50,26 @@ jobs:
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest
         build-args: |
           ENVIRONMENT=Development
-
-  deploy:
-    name: Deploy into Heroku Account
-    runs-on: ubuntu-latest
-    needs: docker
-
-    environment: Development
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       
-      - name: Update Heroku CLI
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: sudo apt update && sudo apt install heroku
+    - name: Update Heroku CLI
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: sudo apt update && sudo apt install heroku
 
-      - name: Login to Heroku Container Registry
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login
+    - name: Login to Heroku Container Registry
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: heroku container:login
 
-      - name: Build and push
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push --app ${{ secrets.HEROKU_API_NAME }} -R --arg ENVIRONMENT=Development 
+    - name: Build and push
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: heroku container:push --app ${{ secrets.HEROKU_API_NAME }} -R --arg ENVIRONMENT=Development 
 
-      - name: Release to Development
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release . --app ${{ secrets.HEROKU_API_NAME }} --context-path /src/IT.Identity.Api/ --arg ENVIRONMENT=Development
+    - name: Release to Development
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: heroku container:release . --app ${{ secrets.HEROKU_API_NAME }} --context-path /src/IT.Identity.Api/ --arg ENVIRONMENT=Development
 
       # - name: App Settings Variable Substitution
       #   uses: microsoft/variable-substitution@v1
