@@ -58,17 +58,38 @@ jobs:
     environment: Development
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: App Settings Variable Substitution
-        uses: microsoft/variable-substitution@v1
-        with: 
-          files: '**/appsettings.json'
+        uses: actions/checkout@v4
+      
+      - name: Update Heroku CLI
         env:
-          AppSettings: ${{ secrets.APP_SETTINGS }}
-      - name: Deploying into Heroku
-        uses: AkhileshNS/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          usedocker: true
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: sudo apt update && sudo apt install heroku
+
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      - name: Build and push
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:push web --app ${{ secrets.HEROKU_API_NAME }} --context-path ./src/IT.Identity.Api
+
+      - name: Release to Development
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release web --app ${{ secrets.HEROKU_API_NAME }} --context-path ./src/IT.Identity.Api
+
+      # - name: App Settings Variable Substitution
+      #   uses: microsoft/variable-substitution@v1
+      #   with: 
+      #     files: '**/appsettings.json'
+      #   env:
+      #     AppSettings: ${{ secrets.APP_SETTINGS }}
+      # - name: Deploying into Heroku
+      #   uses: AkhileshNS/heroku-deploy@v3.12.12
+      #   with:
+      #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+      #     heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
+      #     heroku_email: ${{ secrets.HEROKU_EMAIL }}
+      #     usedocker: true
