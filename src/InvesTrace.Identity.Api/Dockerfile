@@ -25,8 +25,8 @@ COPY --from=publish /app/publish .
 
 ARG ENVIRONMENT
 ENV ASPNETCORE_ENVIRONMENT $ENVIRONMENT
-#ENTRYPOINT [ "dotnet", "InvesTrace.Identity.Api.dll" ]
+ENTRYPOINT [ "dotnet", "InvesTrace.Identity.Api.dll" ]
 
 # Usa porta dinâmica do Heroku
-CMD ASPNETCORE_URLS="http://*:$PORT" dotnet InvesTrace.Identity.Api.dll
+#CMD ASPNETCORE_URLS="http://*:$PORT" dotnet InvesTrace.Identity.Api.dll
 
