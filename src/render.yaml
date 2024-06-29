@@ -1,0 +1,10 @@
+# Exported from Render on 2024-06-29T05:15:47Z
+services:
+- type: web
+  name: it-identity-development:latest
+  runtime: image
+  image:
+    url: docker.io/gabrieljunio/it-identity-development:latest
+  plan: free
+  region: oregon
+version: "1"
