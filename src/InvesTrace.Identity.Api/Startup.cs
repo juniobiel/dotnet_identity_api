@@ -29,7 +29,7 @@ public class Startup
         services.AddAuthenticationConfig(Configuration);
         services.AddDependencyInjections();
 
-        Console.WriteLine(Directory.GetCurrentDirectory());
+        Console.WriteLine(Directory.GetCurrentDirectory().ToString());
     }
 
     public void Configure( IApplicationBuilder app, IHostEnvironment env )
