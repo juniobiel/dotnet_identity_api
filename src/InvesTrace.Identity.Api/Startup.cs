@@ -28,6 +28,8 @@ public class Startup
         services.AddIdentityConfig();
         services.AddAuthenticationConfig(Configuration);
         services.AddDependencyInjections();
+
+        Console.WriteLine(Directory.GetCurrentDirectory());
     }
 
     public void Configure( IApplicationBuilder app, IHostEnvironment env )
