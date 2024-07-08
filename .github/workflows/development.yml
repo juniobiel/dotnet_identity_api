@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -23,46 +22,74 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     needs: build
-
+    environment: Development
+    
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
+
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
+
     - name: Login to DockerHub
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
     - name: Build and push
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6
       with:
-        context: .
-        file: ./src/InvesTrace.Identity.Api/Dockerfile
+        context: "{{defaultContext}}:src"
+        file: ./InvesTrace.Identity.Api/Dockerfile
         push: true
-        tags: gabrieljunio/finance-api:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/it-identity-development:latest
+        build-args: |
+          ENVIRONMENT=Development
+    
+    - name: Trigger deploy on Render server
+      run: |
+        curl ${{secrets.RENDER_TRIGGER_DEPLOY}}
 
-  deploy:
-    name: Deploy into Heroku Account
-    runs-on: ubuntu-latest
-    needs: docker
 
-    environment: Development
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: App Settings Variable Substitution
-        uses: microsoft/variable-substitution@v1
-        with: 
-          files: '**/appsettings.json'
-        env:
-          AppSettings: ${{ secrets.APP_SETTINGS }}
-      - name: Deploying into Heroku
-        uses: AkhileshNS/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          usedocker: true
+  # deploy:
+  #   name: Deploy into Digital Ocean
+  #   runs-on: ubuntu-latest
+  #   needs: docker
+
+  #   environment: Development
+  #   steps:
+  #     - name: Checkout main
+  #       uses: actions/checkout@v4
+
+  #     - name: Update SHA
+  #       run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/site/_meta
+
+  #     - name: Build container image
+  #       run: docker build -t registry.digitalocean.com/it-registry:$(echo $GITHUB_SHA | head -c7) src/InvesTrace.Identity.Api/
+
+  #     - name: Install doctl
+  #       uses: digitalocean/action-doctl@v2.5.1
+  #       with:
+  #         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+  #     - name: Log in to DigitalOcean Container Registry with short-lived credentials
+  #       run: doctl registry login --expiry-seconds 600
+
+  #     - name: Push image to DigitalOcean Container Registry
+  #       run: docker push registry.digitalocean.com/it-registry:$(echo $GITHUB_SHA | head -c7)
+
+  #     - name: Update deployment file
+  #       run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/it-registry:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+
+  #     - name: Save DigitalOcean kubeconfig with short-lived credentials
+  #       run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 development-k8s-1-18
+
+  #     - name: Deploy to DigitalOcean Kubernetes
+  #       run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
+
+  #     - name: Verify deployment
+  #       run: kubectl rollout status deployment/static-example

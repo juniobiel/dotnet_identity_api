@@ -1,35 +1,32 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-WORKDIR /
+WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
 #ENV ASPNETCORE_URLS=http://+:8000;http://+:80;
-ENV ASPNETCORE_ENVIRONMENT=$envname
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
 # Copy all in this root folder
-COPY . /Identity
-
-#Faz a navegação
-WORKDIR /Identity
-
+COPY ./InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj /InvesTrace.Identity.Api/
+WORKDIR /InvesTrace.Identity.Api
 # Restore libraries
 RUN dotnet restore
 
-# Build
-RUN dotnet build -c Release -o /build
+COPY . .
 
-#define o nome do step
+RUN dotnet build InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj -c Release -o /app/build
+
 FROM build AS publish
-
-RUN dotnet publish -c Release -o /publish
+RUN dotnet publish InvesTrace.Identity.Api/InvesTrace.Identity.Api.csproj -c Release -o /app/publish
 
 FROM runtime AS final
-WORKDIR /publish
+WORKDIR /app
+COPY --from=publish /app/publish .
 
-COPY --from=publish /publish .
-
-#ENTRYPOINT [ "dotnet", "InvesTrace.Identity.Api.dll" ]
+ARG ENVIRONMENT
+ENV ASPNETCORE_ENVIRONMENT $ENVIRONMENT
+ENTRYPOINT [ "dotnet", "InvesTrace.Identity.Api.dll" ]
 
 # Usa porta dinâmica do Heroku
-CMD ASPNETCORE_URLS="http://*:$PORT" dotnet InvesTrace.Identity.Api.dll
+#CMD ASPNETCORE_URLS="http://*:$PORT" dotnet InvesTrace.Identity.Api.dll
+
