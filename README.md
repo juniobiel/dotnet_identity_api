@@ -2,5 +2,5 @@
 
 ## Docker configs
 ```
-docker build -t identity --build-arg envname=Development .
+docker build -t identity --build-arg ENVIRONMENT=Development .
 ```
